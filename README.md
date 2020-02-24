@@ -7,32 +7,32 @@ stdlib (except for RSpec and companion helpers).
 ## Usage
 
 Just run `$ bundle exec ruby bin/mtg_api.rb` and it will start printing the
-cards names according to the three requested features one after the other.
+names of the cards according to the three requested features one after the other.
 Also, you can use the `--interactive` switch to let the tool ask for a keypress
 after each set.
 
-The specs wheren't clear about which information of each card should be listed,
-but as there was a lot of data for each one I've choosen to just print it's
+The specs weren't clear about which information of each card should be listed,
+but as there was a lot of data for each one I've chosen to just print its
 name.
 
 ## Internals
 
 The `MtgAPI` class acts as a thin
-(Facade)[https://en.wikipedia.org/wiki/Facade_pattern] around the endpoint API
+[Facade](https://en.wikipedia.org/wiki/Facade_pattern) around the endpoint API
 and internally works with `net/http`.
 
-`CardRepository` allows to query all cards in one go with `#all` or the more
+`CardRepository` allows querying all cards in one go with `#all` or the more
 specific requested queries `#by_set` and `#by_set_and_rarity`. Beware that
 after the first data load the results are cached. Data request strategy is
 abstracted with the injected dependency to allow for different retrieval
-options (a bit over-architected when there is only one I admit, but keep
+options (a bit over-architected when there is only one I admit but keep
 reading).
 
 `ParallelStrategy` is the final retrieval strategy as explained next.
 
 ## Parallelization
 
-A first simple solution of this problem will be to sequentially request page
+A first simple solution to this problem will be to sequentially request page
 after page at the endpoint. Although MRI has the GIL (which multiple threads to
 be running Ruby code at the same time), we are most of the time waiting for I/O
 to complete so there is a lot be gain by parallelization.
@@ -40,10 +40,10 @@ to complete so there is a lot be gain by parallelization.
 The next improvement in complexity will be to start a group of N `Threads` to
 query the endpoint concurrently. When every thread in the group finishes, we
 gather all the responses and then proceed with the next block. According to my
-tests this improves performance by more than 50%.
+tests, this improves performance by more than 50%.
 
-An still better approach will be to use a `ThreadPool` of workers. This way,
-when a worker finishes its request, it can inmmediately grab another piece of
+A still better approach it is to use a `ThreadPool` of workers. This way,
+when a worker finishes its request, it can immediately grab another piece of
 work and is not waiting for the slowest one in the group to finish. This cuts
 the total time another 25%.
 
@@ -63,16 +63,16 @@ that are battle-tested (but you said bonus points!).
 Use `$ bundle exec rspec` to run the test suite.
 
 Testing code that interacts with an external API can be complex. For `MtgAPI`
-I've choosen to do a few integration specs with the VCR gem
-(https://github.com/vcr/vcr). VCR will record the first interaction with the
-API and store it in a *cassette* for latter playback.
+I've chosen to do a few integration specs with the
+[VCR gem](https://github.com/vcr/vcr). VCR will record the first
+interaction with the API and store it in a *cassette* for later playback.
 
 If the payload was smaller and simpler I might have considered using directly
 WebMock (https://github.com/bblimke/webmock) to stub requests via code. IMHO
 mocking directly `net/http` can result in brittle tests very fast.
 
 `CardRepository` and `ParallelStrategy` are good candidates for direct mocking
-of dependencies and I just used `Rspec` with it's companion mocking library.
+of dependencies and I just used `Rspec` with its companion mocking library.
 
 ## Have you ever been to the dark side of the moon?
 
@@ -82,7 +82,7 @@ There is a secret `dark_side_of_the_moon` branch in this repo that..
 
 With the help of https://github.com/piotrmurach/tty-progressbar it allows you
 to know which is the current progress and estimated time remaining of the
-workload. Because, who likes waiting just watching a blank screen?
+workload. Because who likes waiting just watching a blank screen?
 
 ### Allows to switch to all retrieval strategies with switches
 
@@ -113,7 +113,7 @@ Use `--workers=XX` to spin up a specific number of workers to fine-tune performa
 ### Compare the performance of different concurrent workers
 
 Running `ruby bin/iterate_workers.rb` will start iterating over different
-workers size to call and benchmark `mtg_cards.rb` performance. After storing
+worker's size to call and benchmark `mtg_cards.rb` performance. After storing
 all the results it will produce a graph in the terminal like this:
 
 ```
@@ -140,5 +140,5 @@ all the results it will produce a graph in the terminal like this:
 45: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 222.89
 ```
 
-For this to work you need (termgraph)[https://github.com/mkaz/termgraph]
-installed via `$ pip3 install termgraph`.
+For this to work you need [termgraph](https://github.com/mkaz/termgraph),
+that can be installed via `$ pip3 install termgraph`.
