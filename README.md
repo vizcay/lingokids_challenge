@@ -135,7 +135,7 @@ sys     0m1.746s
 
 Use `--workers=XX` to spin up a specific number of workers to fine-tune performance.
 
-### Compare the performance of different concurrent workers
+### Graphs the performance of different ThreadPool sizes
 
 Running `ruby bin/iterate_workers.rb` will start iterating over different
 worker's size to call and benchmark `mtg_cards.rb` performance. After storing
