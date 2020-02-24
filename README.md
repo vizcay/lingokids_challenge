@@ -74,6 +74,31 @@ mocking directly `net/http` can result in brittle tests very fast.
 `CardRepository` and `ParallelStrategy` are good candidates for direct mocking
 of dependencies and I just used `Rspec` with its companion mocking library.
 
+## API Rate-Limit
+
+In the API [documentation](https://docs.magicthegathering.io/) it states:
+
+> Third-party applications are currently throttled to 5000 requests per hour.
+> As this API continues to age, the rate limits may be updated to provide
+> better performance to users
+
+For sure there was an update becase `Ratelimit-Remaining` starts at 1000 and,
+after simple examination the moving window is much shorter than an hour (my
+guess is around 5min). When trying to exhaust the service, it looks like the
+Heroku request queue fills first and it starts responding with `503 -
+Unavailable service` much earlier than when you get low on the
+`Ratelimit-Remaining` number (try hitting the API with more than 100 concurrent
+threads and see).
+
+In this situation, and being in the dark exactly how the Heroku queue operates
+(or if it is in real a DDoS mitigation attempt) is very complex to implement a
+**really working scheme for this**. My first guess was something like:
+
+```sleep(COOLDOWN_TIME) if response['Ratelimit-Remaining'] < 50```
+
+after procesing a response. But while tried to test it, `<503>` appeared before
+always so I've removed it from the source because it was too arbitrary.
+
 ## Have you ever been to the dark side of the moon?
 
 There is a secret `dark_side_of_the_moon` branch in this repo that..
