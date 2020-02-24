@@ -1,7 +1,7 @@
 require_relative '../lib/card_repository'
 require_relative '../lib/utils/terminal_helpers'
 
-card_repository = CardRepository.new
+card_repository = CardRepository.new(strategy: strategy_factory)
 
 puts "Cards grouped by set\n"
 card_repository.by_set.each_pair do |set, cards|
