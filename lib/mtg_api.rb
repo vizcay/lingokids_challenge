@@ -11,15 +11,11 @@ class MtgAPI
 
   def get_cards(page:)
     @connection_pool.with do |connection|
-      response = connection.request_get("/v1/cards?page=#{page}")
-      JSON.parse(response.body)['cards']
-    end
-  end
-
-  def get_cards_pages
-    @connection_pool.with do |connection|
-      headers = connection.request_head('/v1/cards')
-      return (headers['Total-count'].to_f / headers['Page-size'].to_f).ceil
+      response    = connection.request_get("/v1/cards?page=#{page}")
+      total_count = response['Total-count'].to_f
+      page_size   = response['Page-size'].to_f
+      return OpenStruct.new(cards: JSON.parse(response.body)['cards'],
+                            total_pages: (total_count / page_size).ceil)
     end
   end
 

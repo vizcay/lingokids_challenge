@@ -11,10 +11,12 @@ class ParallelStrategy
     thread_pool = Utils::ThreadPool.new(size: @workers)
     mutex = Mutex.new
 
-    all_cards = []
-    @mtg_api.get_cards_pages.times do |i|
+    first_page = @mtg_api.get_cards(page: 1)
+    all_cards = first_page.cards
+
+    (2..first_page.total_pages).each do |page|
       thread_pool.schedule do
-        chunk = @mtg_api.get_cards(page: i.succ)
+        chunk = @mtg_api.get_cards(page: page).cards
         mutex.synchronize { all_cards += chunk }
       end
     end
