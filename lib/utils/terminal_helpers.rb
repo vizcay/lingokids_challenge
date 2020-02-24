@@ -1,4 +1,5 @@
 require_relative '../sequential_strategy'
+require_relative '../block_strategy'
 
 def continue
   if ARGV.include?('--interactive')
@@ -12,8 +13,10 @@ def card_list(cards)
 end
 
 def strategy_factory
-  if ARGV.include?('--sequential')
+  if ARGV.include?('--sequential-requests')
     SequentialStrategy.new
+  elsif ARGV.include?('--block-requests')
+    BlockStrategy.new
   else
     ParallelStrategy.new
   end
