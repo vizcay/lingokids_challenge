@@ -8,7 +8,6 @@ class ParallelStrategy
   def initialize(mtg_api: nil, workers: 35)
     @workers = workers
     @mtg_api = mtg_api || MtgAPI.new(pool_size: @workers)
-    STDERR.puts "ParallelStrategy with #{@workers} workers"
   end
 
   def call
