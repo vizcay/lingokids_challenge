@@ -14,17 +14,19 @@ class ParallelStrategy
     thread_pool = Utils::ThreadPool.new(size: @workers)
     mutex = Mutex.new
 
-    progress = TTY::ProgressBar.new(BAR, head: '>', total: @mtg_api.get_cards_pages)
+    first_page = @mtg_api.get_cards(page: 1)
+    all_cards = first_page.cards
+
+    progress = TTY::ProgressBar.new(BAR, head: '>', total: first_page.total_pages)
     progress.start
 
-    all_cards = []
-    @mtg_api.get_cards_pages.times do |i|
+    (2..first_page.total_pages).each do |page|
       thread_pool.schedule do
-        chunk = @mtg_api.get_cards(page: i.succ)
-        mutex.synchronize {
+        chunk = @mtg_api.get_cards(page: page).cards
+        mutex.synchronize do
           all_cards += chunk
           progress.advance
-        }
+        end
       end
     end
 
