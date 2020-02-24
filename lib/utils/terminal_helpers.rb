@@ -1,6 +1,8 @@
 require_relative '../sequential_strategy'
 require_relative '../block_strategy'
 
+GC.disable if ARGV.include?('--disable-gc')
+
 def continue
   if ARGV.include?('--interactive')
     puts "\nPress any key to continue..\n"
@@ -18,6 +20,8 @@ def strategy_factory
   elsif ARGV.include?('--block-requests')
     BlockStrategy.new
   else
-    ParallelStrategy.new
+    match = ARGV.map { |arg| arg.match(/--workers=(\d+)/)&.[](1) }.compact
+    workers = match.first.to_i unless match.empty?
+    ParallelStrategy.new(workers: workers || 30)
   end
 end
