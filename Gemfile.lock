@@ -22,6 +22,15 @@ GEM
       rspec-support (~> 3.9.0)
     rspec-support (3.9.2)
     safe_yaml (1.0.5)
+    strings-ansi (0.1.0)
+    tty-cursor (0.7.1)
+    tty-progressbar (0.17.0)
+      strings-ansi (~> 0.1.0)
+      tty-cursor (~> 0.7)
+      tty-screen (~> 0.7)
+      unicode-display_width (~> 1.6)
+    tty-screen (0.7.1)
+    unicode-display_width (1.6.1)
     vcr (5.1.0)
     webmock (3.8.2)
       addressable (>= 2.3.6)
@@ -33,6 +42,7 @@ PLATFORMS
 
 DEPENDENCIES
   rspec
+  tty-progressbar
   vcr
   webmock
 
