@@ -1,3 +1,4 @@
+require 'io/console'
 require_relative '../sequential_strategy'
 require_relative '../block_strategy'
 
