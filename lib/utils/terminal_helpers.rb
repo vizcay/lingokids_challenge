@@ -1,3 +1,5 @@
+require 'io/console'
+
 def continue
   if ARGV.include?('--interactive')
     puts "\nPress any key to continue..\n"
